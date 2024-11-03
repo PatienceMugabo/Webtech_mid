@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+  <head th:replace="fragments/layout :: head(title='Blog Post')"> </head>
+  <body class="bg-light">
+    <header th:replace="fragments/layout :: nav"></header>
+
+    <!-- Add a spacer div to prevent content from hiding behind the navbar -->
+    <div style="padding-top: 70px"></div>
+
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-lg-8 mx-auto">
+          <article>
+            <h1 class="mb-4" th:text="${post.title}">Post Title</h1>
+
+            <!-- Moved edit and delete buttons here -->
+            <div class="mb-4" th:if="${#authorization.expression('isAuthenticated()')}">
+              <a
+                th:if="${#authentication.name == post.account.email or #authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+                th:href="@{'/posts/' + ${post.id} + '/edit'}"
+                class="btn btn-primary btn-sm"
+                >Edit Post</a
+              >
+              <a
+                th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}"
+                th:href="@{'/posts/' + ${post.id} + '/delete'}"
+                class="btn btn-danger btn-sm"
+                onclick="return confirm('Are you sure you want to delete this post?')"
+                >Delete Post</a
+              >
+            </div>
+
+            <img
+              th:if="${post.imageFilePath}"
+              th:src="@{'/images/' + ${post.imageFilePath}}"
+              class="img-fluid mb-4"
+              th:alt="${post.title}"
+            />
+            <p class="text-muted">
+              <small th:text="${#temporals.format(post.createdAt, 'dd MMMM yyyy')}">Post Date</small>
+            </p>
+            <div class="text-justify" th:utext="${post.body}">Post content goes here...</div>
+          </article>
+
+          <!-- Removed the old button location -->
+        </div>
+      </div>
+    </div>
+
+    <footer th:replace="fragments/layout :: footer"></footer>
+    <th:block th:replace="fragments/layout :: scripts"></th:block>
+  </body>
+</html>

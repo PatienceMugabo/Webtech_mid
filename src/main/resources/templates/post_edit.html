@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="fragments/layout :: head(title='Edit Post - Paty Blog')"> </head>
+  <body class="bg-light">
+    <header th:replace="fragments/layout :: nav"></header>
+
+    <!-- Add a spacer div to prevent content from hiding behind the navbar -->
+    <div style="padding-top: 70px"></div>
+
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card shadow">
+            <div class="card-body">
+              <h2 class="card-title text-center mb-4">Edit Post</h2>
+              <form
+                action="#"
+                th:action="@{'/posts/{id}'(id=${post.id})}"
+                th:object="${post}"
+                enctype="multipart/form-data"
+                method="post"
+              >
+                <input type="hidden" th:field="*{id}" />
+                <input type="hidden" th:field="*{createdAt}" />
+                <input type="hidden" th:field="*{account}" />
+
+                <div class="mb-3">
+                  <img
+                    th:if="*{imageFilePath}"
+                    th:src="@{'/images/' + *{imageFilePath}}"
+                    class="img-fluid mb-2"
+                    alt="Post image"
+                  />
+                  <input
+                    id="input-file"
+                    type="file"
+                    name="file"
+                    class="form-control"
+                    accept="image/png, image/jpeg, image/jpg, image/bmp"
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label for="edit-post-title" class="form-label">Title</label>
+                  <input
+                    id="edit-post-title"
+                    type="text"
+                    th:field="*{title}"
+                    class="form-control"
+                    placeholder="Enter post title"
+                    required
+                  />
+                </div>
+
+                <div class="mb-3">
+                  <label for="edit-post-body" class="form-label">Body</label>
+                  <textarea
+                    id="edit-post-body"
+                    th:field="*{body}"
+                    class="form-control"
+                    rows="6"
+                    placeholder="Write your post content here"
+                    required
+                  ></textarea>
+                </div>
+
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-primary">Update Post</button>
+                  <a th:href="@{'/posts/' + ${post.id}}" class="btn btn-secondary">Cancel</a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer th:replace="fragments/layout :: footer"></footer>
+    <th:block th:replace="fragments/layout :: scripts"></th:block>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="fragments/layout :: head(title='Login - Paty Blog')"> </head>
+  <body class="bg-light">
+    <header th:replace="fragments/layout :: nav"></header>
+
+    <!-- Add a spacer div to prevent content from hiding behind the navbar -->
+    <div style="padding-top: 70px"></div>
+
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card shadow">
+            <div class="card-body">
+              <h2 class="card-title text-center mb-4">Login</h2>
+              <form th:action="@{/login}" method="post">
+                <div th:if="${param.error}" class="alert alert-danger">Invalid username or password.</div>
+                <div class="mb-3">
+                  <label for="username" class="form-label">Email address</label>
+                  <input type="email" class="form-control" id="username" name="email" required autofocus />
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label">Password</label>
+                  <input type="password" class="form-control" id="password" name="password" required />
+                </div>
+                <div class="d-grid">
+                  <button type="submit" class="btn btn-primary">Sign in</button>
+                </div>
+              </form>
+              <div class="mt-3 text-center">
+                <a href="/register" class="text-decoration-none">Don't have an account? Register here</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add a spacer div to prevent content from hiding behind the navbar -->
+    <footer th:replace="fragments/layout :: footer"></footer>
+    <th:block th:replace="fragments/layout :: scripts"></th:block>
+  </body>
+</html>

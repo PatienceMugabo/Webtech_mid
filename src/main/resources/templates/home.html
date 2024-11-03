@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="~{fragments/layout :: head(title='Paty Blog - Home')}"> </head>
+  <body class="bg-light">
+    <header th:replace="~{fragments/layout :: nav}"></header>
+
+    <!-- Add a spacer div to prevent content from hiding behind the navbar -->
+    <div style="padding-top: 70px"></div>
+
+    <div class="container mt-5">
+      <h2 class="mb-4" th:text="#{posts.title}">Latest Blog Posts</h2>
+
+      <!-- Search form -->
+      <form th:action="@{/posts}" method="get" class="mb-4">
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control"
+            name="search"
+            th:value="${search}"
+            th:placeholder="#{search.placeholder}"
+          />
+          <button class="btn btn-primary" type="submit" th:text="#{search.button}">Search</button>
+        </div>
+      </form>
+
+      <!-- Sorting options -->
+      <div class="mb-3">
+        <span th:text="#{sort.by}">Sort by: </span>
+        <a
+          th:href="@{/posts(sort='title',direction=${direction == 'ASC' ? 'DESC' : 'ASC'},search=${search})}"
+          th:text="#{sort.title} + ' ' + (${sort == 'title'} ? (${direction == 'ASC'} ? '▲' : '▼') : '')"
+        ></a>
+        |
+        <a
+          th:href="@{/posts(sort='createdAt',direction=${direction == 'ASC' ? 'DESC' : 'ASC'},search=${search})}"
+          th:text="#{sort.date} + ' ' + (${sort == 'createdAt'} ? (${direction == 'ASC'} ? '▲' : '▼') : '')"
+        ></a>
+      </div>
+
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <div class="col" th:each="post : ${posts}">
+          <div class="card h-100 shadow-sm post-card">
+            <img
+              th:src="@{'/images/' + ${post.imageFilePath}}"
+              class="card-img-top"
+              th:alt="${post.title}"
+              style="height: 200px; object-fit: cover"
+            />
+            <div class="card-body">
+              <h5 class="card-title" th:text="${post.title}">Post Title</h5>
+              <p class="card-text" th:text="${#strings.abbreviate(post.body, 100)}">Post body preview...</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted" th:text="${#temporals.format(post.createdAt, 'dd-MM-yyyy')}">Date</small>
+                <a th:href="@{'/posts/' + ${post.id}}" class="btn btn-primary btn-sm" th:text="#{post.readmore}"
+                  >Read More</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <nav aria-label="Page navigation" class="mt-4" th:if="${totalPages > 0}">
+        <ul class="pagination justify-content-center">
+          <li class="page-item" th:classappend="${currentPage == 0} ? disabled">
+            <a
+              class="page-link"
+              th:href="@{/posts(page=${currentPage - 1},size=10,sort=${sort},direction=${direction},search=${search})}"
+              th:text="#{pagination.previous}"
+              >Previous</a
+            >
+          </li>
+          <li
+            class="page-item"
+            th:each="pageNum : ${#numbers.sequence(0, totalPages - 1)}"
+            th:classappend="${pageNum == currentPage} ? active"
+          >
+            <a
+              class="page-link"
+              th:href="@{/posts(page=${pageNum},size=10,sort=${sort},direction=${direction},search=${search})}"
+              th:text="${pageNum + 1}"
+            ></a>
+          </li>
+          <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? disabled">
+            <a
+              class="page-link"
+              th:href="@{/posts(page=${currentPage + 1},size=10,sort=${sort},direction=${direction},search=${search})}"
+              th:text="#{pagination.next}"
+              >Next</a
+            >
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+    <th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+  </body>
+</html>
